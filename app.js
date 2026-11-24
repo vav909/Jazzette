@@ -140,9 +140,10 @@ const tonEl = (fam, mode, btn = true) => {
   const t = btn ? 'button' : 'div';
   return h(`<${t} class="card ton ${mode}"><span class="nm">${tName(fam, mode)}</span>${ICON[mode === 'M' ? 'sun' : 'moon']}</${t}>`);
 };
+const capHTML = a => `<span class="cap">${a === 0 ? '&nbsp;' : accWords(a)}</span>`;   // noms des altérations, en petit sous la portée
 const armEl = (a, btn = true, mode = null) => {
   const t = btn ? 'button' : 'div';
-  return h(`<${t} class="card arm">${staffSVG(a)}${mode ? `<span class="badge ${mode}">${ICON[mode === 'M' ? 'sun' : 'moon']}</span>` : ''}</${t}>`);
+  return h(`<${t} class="card arm">${staffSVG(a)}${capHTML(a)}${mode ? `<span class="badge ${mode}">${ICON[mode === 'M' ? 'sun' : 'moon']}</span>` : ''}</${t}>`);
 };
 
 function link(a, b, shape = 'curve') {
@@ -258,7 +259,7 @@ async function memo(phase, fams) {
   const els = defs.map(c => {
     const front = c.kind === 'T'
       ? `<div class="face con ton ${c.mode}"><span class="nm">${tName(c.fam, c.mode)}</span>${ICON[c.mode === 'M' ? 'sun' : 'moon']}</div>`
-      : `<div class="face con">${staffSVG(BY[c.fam].a)}</div>`;
+      : `<div class="face con arm">${staffSVG(BY[c.fam].a)}${capHTML(BY[c.fam].a)}</div>`;
     const e = h(`<button class="mc"><div class="in"><div class="face cov"></div>${front}</div></button>`);
     e._c = c; grid.append(e); return e;
   });
