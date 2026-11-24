@@ -37,8 +37,9 @@ const MEMO_MAX_MISS = 6;   // paires tonalité/armure ratées tolérées au solo
 const SOLID_WINS = 3;      // réussites du premier coup pour devenir solide (à tester)
 
 const accWords = a => a > 0 ? SH.slice(0, a).join(' ') : a < 0 ? FL.slice(0, -a).join(' ') : 'rien';
-const tName = (fam, mode) => mode === 'M' ? BY[fam].n : BY[fam].rel;
-const fixMsg = (fam, mode) => `${tName(fam, mode)} ${mode === 'M' ? 'majeur' : 'mineur'} : ${accWords(BY[fam].a)}.`;
+// Notation : M = majeur (FaM), m = mineur (Fam).
+const tName = (fam, mode) => mode === 'M' ? BY[fam].n + 'M' : BY[fam].rel + 'm';
+const fixMsg = (fam, mode) => `${tName(fam, mode)} : ${accWords(BY[fam].a)}.`;
 
 /* ================= Utilitaires ================= */
 const $ = (s, r = document) => r.querySelector(s);
@@ -238,7 +239,7 @@ async function ask(q, phase, bonus = false) {
   }
   wrong.classList.add('bad');
   rights.forEach(r => { if (!r.classList.contains('good')) { r.classList.add('good'); link(P, r, q.game === 3 ? 'edge' : 'curve'); } });
-  const text = q.game === 3 ? `${fixMsg(q.fam, 'M').replace(' majeur :', ' majeur et ' + BY[q.fam].rel + ' mineur :')}` : fixMsg(q.fam, q.mode);
+  const text = q.game === 3 ? `${tName(q.fam, 'M')} et ${tName(q.fam, 'm')} : ${accWords(BY[q.fam].a)}.` : fixMsg(q.fam, q.mode);
   setMsg(text, 'err');
   if (phase === 'solo' && !bonus) run.errors++;
   const replay = recordErr(q.fam);
@@ -305,7 +306,7 @@ async function memo(phase, fams) {
 let run = null;
 const stripHTML = (list, before) => list.map(f => {
   const c = S.cards[f] || {}, cls = c.solid ? 'solid' : c.fragile ? 'fragile' : '';
-  return `<span class="chip ${cls}${before && c.solid && !before.has(f) ? ' pop' : ''}">${BY[f].n}</span>`;
+  return `<span class="chip ${cls}${before && c.solid && !before.has(f) ? ' pop' : ''}">${BY[f].n}M</span>`;
 }).join('');
 const drawStrip = (K, before) => { $('#strip').innerHTML = stripHTML(K, before); };
 function drawDots() {
@@ -327,8 +328,8 @@ function micro() {
   return new Promise(res => {
     openSheet(`<div class="micro">
       <div class="card arm">${staffSVG(0)}</div>
-      <div class="grid2"><div class="card ton M"><span class="nm">Do</span>${ICON.sun}</div><div class="card ton m"><span class="nm">La</span>${ICON.moon}</div></div>
-      <p class="big">${sym('Do ☀ et La ☾ ont la même armure. On dit qu’elles sont relatives.')}</p></div>
+      <div class="grid2"><div class="card ton M"><span class="nm">DoM</span>${ICON.sun}</div><div class="card ton m"><span class="nm">Lam</span>${ICON.moon}</div></div>
+      <p class="big">${sym('DoM ☀ et Lam ☾ ont la même armure. On dit qu’elles sont relatives.')}</p></div>
       <button class="primary" id="mOk">OK</button>`);
     $('#mOk').onclick = () => { closeSheet(); res(); };
   });
@@ -386,7 +387,7 @@ function renderHome() {
   const next = Math.min(S.done + 1, 20), kc = Math.ceil(next / 4), known = knownAt(kc);
   const strip = TONS.map(t => {
     const c = S.cards[t.id] || {}, cls = c.solid ? 'solid' : c.fragile ? 'fragile' : '';
-    return `<span class="chip ${known.includes(t.id) ? cls : 'off'}">${t.n}</span>`;
+    return `<span class="chip ${known.includes(t.id) ? cls : 'off'}">${t.n}M</span>`;
   }).join('');
   let path = '';
   for (let c = 1; c <= 5; c++) {
@@ -395,7 +396,7 @@ function renderHome() {
       const n = (c - 1) * 4 + i, st = n <= S.done ? 'done' : n === S.done + 1 ? 'now' : 'locked';
       tiles += `<button class="tile ${st}" data-n="${n}" ${st === 'locked' ? 'disabled' : ''}><b>${n}</b><small>${GAMES[i].nom}</small>${st === 'done' ? ICON.check : st === 'locked' ? ICON.lock : ''}</button>`;
     }
-    path += `<section><div class="cyc-h"><span>Cycle ${c}</span><span>${c === 1 ? '' : '+ ' + ADD[c - 1].map(f => BY[f].n).join(' ')}</span></div><div class="tiles">${tiles}</div></section>`;
+    path += `<section><div class="cyc-h"><span>Cycle ${c}</span><span>${c === 1 ? '' : '+ ' + ADD[c - 1].map(f => BY[f].n + 'M').join(' ')}</span></div><div class="tiles">${tiles}</div></section>`;
   }
   const finished = S.done >= 20;
   $('#home').innerHTML = `
@@ -415,8 +416,8 @@ function showEnd() {
   let w = '<svg class="wheel" viewBox="-130 -130 260 260"><circle class="ring" r="98"/><circle class="ring" r="58"/>';
   order.forEach((f, i) => {
     const an = i / 12 * 2 * Math.PI - Math.PI / 2, c = Math.cos(an), s = Math.sin(an);
-    w += `<g class="wd" style="--d:${i * 70}ms"><circle cx="${c * 98}" cy="${s * 98}" r="19" fill="#FFE9A8"/><text x="${c * 98}" y="${s * 98 + 4}">${BY[f].n}</text>
-      <circle cx="${c * 58}" cy="${s * 58}" r="15" fill="#C9D8F5"/><text class="s" x="${c * 58}" y="${s * 58 + 3.5}">${BY[f].rel}</text></g>`;
+    w += `<g class="wd" style="--d:${i * 70}ms"><circle cx="${c * 98}" cy="${s * 98}" r="19" fill="#FFE9A8"/><text x="${c * 98}" y="${s * 98 + 4}">${BY[f].n}M</text>
+      <circle cx="${c * 58}" cy="${s * 58}" r="15" fill="#C9D8F5"/><text class="s" x="${c * 58}" y="${s * 58 + 3.5}">${BY[f].rel}m</text></g>`;
   });
   w += '</svg>';
   $('#end').innerHTML = `${w}<h2>Chapitre 5 terminé.</h2><p>Prochain chapitre : le II-V-I.</p>

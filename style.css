@@ -143,8 +143,8 @@ button.card:active{transform:scale(.985)}
 #end h2{margin:6px 0 0;font-size:26px}
 #end p{margin:0;color:var(--mute);font-size:17px}
 .wheel{width:min(300px,78vw);height:auto}
-.wheel text{text-anchor:middle;font-size:12px;font-weight:600;fill:var(--ink)}
-.wheel text.s{font-size:9.5px;font-weight:500}
+.wheel text{text-anchor:middle;font-size:11px;font-weight:600;fill:var(--ink)}
+.wheel text.s{font-size:8.5px;font-weight:500}
 .wheel .wd{animation:rise .6s var(--d) both}
 .wheel .ring{fill:none;stroke:var(--line);stroke-width:1}
 

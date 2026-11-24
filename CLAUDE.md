@@ -10,6 +10,7 @@ Projet indépendant de Loops (autre dépôt). Fichiers statiques sans build : `i
 - Design : fond `#FAFAF7`, texte `#2B2B33`, majeur ☀ `#FFE9A8`, mineur ☾ `#C9D8F5`, bonne réponse `#CDEBD3`, erreur `#F7D0D0`.
   Cartes arrondies à ombre légère, carte « illuminée » = halo doux. Aucune illustration enfantine ni mascotte dans les jeux.
 - Pictos (☀ ☾, boutons) toujours en SVG, jamais en symbole texte (emoji sur Android).
+- Notation des tonalités partout (cartes, messages, bilan) : `M` = majeur, `m` = mineur, collé au nom : FaM, Fam, Si♭M, Sol♯m. Pas de « majeur » / « mineur » écrits.
 - Textes : français, tutoiement, phrases courtes, peu de texte. Jamais « c'est parti », « manche » ni « objectif » à l'écran.
 - Chapitre 5 : 5 cycles, 20 paliers, 4 jeux (Trouve l'armure, Trouve la tonalité, Les cousines, Mémo).
   Déroulé : échauffement (dès le cycle 2), tuto (4 tours, sans erreur possible), solo (4 tours, 2 erreurs = palier rejoué).
