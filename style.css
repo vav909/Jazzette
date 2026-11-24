@@ -158,8 +158,7 @@ button.card:active{transform:scale(.985)}
 @keyframes fade{to{opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-/* noms des altérations sous la portée */
-.card.arm{display:flex;flex-direction:column;align-items:stretch}
-.cap{display:block;text-align:center;font-size:13px;line-height:1;color:var(--mute);padding:0 0 10px;letter-spacing:.02em}
-.con.arm{flex-direction:column;gap:0;padding:2px 4px}
-.con.arm .cap{font-size:11px;padding-bottom:6px}
+/* nom de chaque altération, sous son symbole */
+.staff .an{font-size:11px;font-weight:600;text-anchor:middle;fill:#5E5E68}
+.con.arm{padding:2px 4px}
+.con.arm .staff{height:100%}

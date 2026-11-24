@@ -88,13 +88,17 @@ const sym = t => t.replace(/☀/g, ICON.sun).replace(/☾/g, ICON.moon);
 const sharp = (x, y) => `<g class="gl"><path d="M${x - 2.6} ${y - 11}V${y + 13}M${x + 2.6} ${y - 13}V${y + 11}" stroke-width="1.3"/><path d="M${x - 5.8} ${y - 1.2}L${x + 5.8} ${y - 5}M${x - 5.8} ${y + 5.6}L${x + 5.8} ${y + 1.8}" stroke-width="2.6" stroke-linecap="butt"/></g>`;
 const flat = (x, y) => `<g class="gl"><path d="M${x - 3} ${y - 17}V${y + 5}" stroke-width="1.5"/><path d="M${x - 3} ${y + 5}C${x + 2} ${y + 2.5} ${x + 7} ${y - 1.5} ${x + 4.2} ${y - 5}C${x + 2} ${y - 7.5} ${x - 3} ${y - 5} ${x - 3} ${y - 1}" stroke-width="1.7"/></g>`;
 const CLEF = 'M9 56C8 61 17 62 18 54L14 14C12 -2 21 -4 20 -12C19 -4 26 4 22 12C17 20 5 22 5 32C5 42 17 44 22 38C27 31 20 24 14 27C10 29 11 35 16 34';
-function staffSVG(a) {
+function staffSVG(a, compact = false) {
   const top = 38, gap = 10, bottom = top + 4 * gap, yOf = s => bottom - s * gap / 2;
-  let s = `<svg class="staff" viewBox="0 20 240 82" aria-hidden="true">`;
-  for (let i = 0; i < 5; i++) s += `<line class="ln" x1="4" x2="236" y1="${top + i * gap}" y2="${top + i * gap}"/>`;
+  const n = Math.abs(a), steps = a > 0 ? STEP_SH : STEP_FL, names = a > 0 ? SH : FL, dx = 26;
+  const W = compact ? Math.max(130, 72 + (n - 1) * dx + 24) : 240;   // compact : cartes du Mémo (plus étroites)
+  let s = `<svg class="staff" viewBox="0 20 ${W} 88" aria-hidden="true">`;
+  for (let i = 0; i < 5; i++) s += `<line class="ln" x1="4" x2="${W - 4}" y1="${top + i * gap}" y2="${top + i * gap}"/>`;
   s += `<g class="clef" transform="translate(12 ${top})"><path d="${CLEF}"/></g>`;
-  const n = Math.abs(a), steps = a > 0 ? STEP_SH : STEP_FL;
-  for (let i = 0; i < n; i++) { const x = 72 + i * 21, y = yOf(steps[i]); s += a > 0 ? sharp(x, y) : flat(x, y); }
+  for (let i = 0; i < n; i++) {
+    const x = 72 + i * dx, y = yOf(steps[i]);
+    s += (a > 0 ? sharp(x, y) : flat(x, y)) + `<text class="an" x="${x}" y="100">${names[i]}</text>`;   // nom sous le symbole
+  }
   return s + '</svg>';
 }
 
@@ -140,10 +144,9 @@ const tonEl = (fam, mode, btn = true) => {
   const t = btn ? 'button' : 'div';
   return h(`<${t} class="card ton ${mode}"><span class="nm">${tName(fam, mode)}</span>${ICON[mode === 'M' ? 'sun' : 'moon']}</${t}>`);
 };
-const capHTML = a => `<span class="cap">${a === 0 ? '&nbsp;' : accWords(a)}</span>`;   // noms des altérations, en petit sous la portée
 const armEl = (a, btn = true, mode = null) => {
   const t = btn ? 'button' : 'div';
-  return h(`<${t} class="card arm">${staffSVG(a)}${capHTML(a)}${mode ? `<span class="badge ${mode}">${ICON[mode === 'M' ? 'sun' : 'moon']}</span>` : ''}</${t}>`);
+  return h(`<${t} class="card arm">${staffSVG(a)}${mode ? `<span class="badge ${mode}">${ICON[mode === 'M' ? 'sun' : 'moon']}</span>` : ''}</${t}>`);
 };
 
 function link(a, b, shape = 'curve') {
@@ -259,7 +262,7 @@ async function memo(phase, fams) {
   const els = defs.map(c => {
     const front = c.kind === 'T'
       ? `<div class="face con ton ${c.mode}"><span class="nm">${tName(c.fam, c.mode)}</span>${ICON[c.mode === 'M' ? 'sun' : 'moon']}</div>`
-      : `<div class="face con arm">${staffSVG(BY[c.fam].a)}${capHTML(BY[c.fam].a)}</div>`;
+      : `<div class="face con arm">${staffSVG(BY[c.fam].a, true)}</div>`;
     const e = h(`<button class="mc"><div class="in"><div class="face cov"></div>${front}</div></button>`);
     e._c = c; grid.append(e); return e;
   });
