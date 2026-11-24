@@ -452,3 +452,5 @@ function openDebug() {
 $('#quit').innerHTML = ICON.close; $('#gdbg').innerHTML = ICON.tune;
 $('#quit').onclick = renderHome; $('#gdbg').onclick = openDebug;
 renderHome();
+
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
